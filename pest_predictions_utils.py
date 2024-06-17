@@ -36,11 +36,13 @@ def load_and_format_training_dataset_excel(excelFileName):
     trainingData = pandas.read_excel(excelFileName, sheet_name='Responses', index_col='responseID')
     trainingData = trainingData.drop(columns=['scientificName', 'question','lookupCombo','notes','references'])
     trainingData = trainingData[trainingData['questionID'].isin(list(Questions.index.values))]
+    trainingData = trainingData[trainingData['taxonID'].isin(list(TrainingSpeciesAndRatings.index.values))]
     trainingData =  trainingData.pivot_table('answer', 
         index=['taxonID'],
         columns='questionID')
     if len(trainingData[trainingData.isnull().any(axis=1)]) > 0:
         print("WARNING- " + str(len(trainingData[trainingData.isnull().any(axis=1)])) + " species do not have complete data. They are excluded")
+        print(trainingData[trainingData.isnull().any(axis=1)])
         trainingData = trainingData.dropna()
     TrainingSpeciesAndRatings['imp2'] = np.where(TrainingSpeciesAndRatings['impactRating'] >= 2, 1, 0)
     TrainingSpeciesAndRatings['imp3'] = np.where(TrainingSpeciesAndRatings['impactRating'] >= 3, 1, 0)
@@ -357,7 +359,7 @@ def generate_working_sheet_openpyxl(questionsDict,trainingDataSummary,randomFore
     ws0 = wb.create_sheet()
     ws0.title = "Instructions"
     ws0.column_dimensions['A'].width = 160
-    ws0.append(["Scolytinae-specific risk assessment model."])
+    ws0.append(["Woodborer-specific risk assessment model."])
     ws0['A' + str(ws0.max_row)].font = Font(size=20)
     ws0.append(["Version: " + datetime.today().strftime('%Y%m%d')])
     ws0.append([""])
