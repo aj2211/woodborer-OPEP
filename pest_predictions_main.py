@@ -4,7 +4,7 @@ from pest_predictions_utils import *
 inputFileName = 'training_data.xlsx'
 outputFileName = "entry_sheet_scolytinae.xlsx"
 
-def(main):
+def main():
     #load a summary of the training data (answers (ie predictive variable data) and 
     # impact ratings (the response variable to be predicted)
     trainingDataSummary = load_and_format_training_dataset_excel(inputFileName)
@@ -44,7 +44,7 @@ def(main):
 
     #run imporance analyses
     questionImportanceDataFrame = get_importance_of_questions_all_taxa(trainingDataSummary,randomForestModelsDict,questionsDict)
-    questionImportanceDataFrame = questionValueDataFrame
+    #questionImportanceDataFrame = questionValueDataFrame
 
 
     #get the means to use as default answers
@@ -54,7 +54,7 @@ def(main):
     generate_working_sheet_openpyxl(questionsDict,trainingDataSummary,randomForestModelsDict,meansDict,outputFileName)
 
 
-    # import joblib
+    # save a backup before the long validation steps
     joblib.dump({'trainingDataSummary': trainingDataSummary,\
     'randomForestModelsDict': randomForestModelsDict,\
     'trainingSpeciesList': trainingSpeciesList,\
@@ -72,7 +72,7 @@ def(main):
     #note - not yet tested in master script
     incValAll,incValSummary = incremental_validation(trainingDataSummary)
 
-    # import joblib
+    # save a new backup after the long validation steps
     joblib.dump({'trainingDataSummary': trainingDataSummary,\
     'randomForestModelsDict': randomForestModelsDict,\
     'trainingSpeciesList': trainingSpeciesList,\
@@ -87,23 +87,22 @@ def(main):
     'trainingDataMeanImpacts': trainingDataMeanImpacts,\
     'questionsDict': questionsDict}, "./outputsSaved_testing.joblib", compress=3)
 
-    import joblib
+    # load the variables if needed for further testing, generating figures etc.
 
-    everythingLoaded = joblib.load("./outputsSaved_testing.joblib")
-
-    trainingDataSummary = everythingLoaded['trainingDataSummary']
-    randomForestModelsDict = everythingLoaded['randomForestModelsDict']
-    trainingSpeciesList = everythingLoaded['trainingSpeciesList']
-    testDataAll = everythingLoaded['testDataAll']
-    predictionsAll = everythingLoaded['predictionsAll']
-    dataSummary = everythingLoaded['dataSummary']
-    predictionsKEqualsN = everythingLoaded['predictionsKEqualsN']
-    meansKEqualsN = everythingLoaded['meansKEqualsN']
-    incValAll = everythingLoaded['incValAll']
-    incValSummary = everythingLoaded['incValSummary']
-    questionImportanceDataFrame = everythingLoaded['questionImportanceDataFrame']
-    trainingDataMeanImpacts = everythingLoaded['trainingDataMeanImpacts']
-    questionsDict = everythingLoaded['questionsDict']
+    # everythingLoaded = joblib.load("./outputsSaved_testing.joblib")
+    # trainingDataSummary = everythingLoaded['trainingDataSummary']
+    # randomForestModelsDict = everythingLoaded['randomForestModelsDict']
+    # trainingSpeciesList = everythingLoaded['trainingSpeciesList']
+    # testDataAll = everythingLoaded['testDataAll']
+    # predictionsAll = everythingLoaded['predictionsAll']
+    # dataSummary = everythingLoaded['dataSummary']
+    # predictionsKEqualsN = everythingLoaded['predictionsKEqualsN']
+    # meansKEqualsN = everythingLoaded['meansKEqualsN']
+    # incValAll = everythingLoaded['incValAll']
+    # incValSummary = everythingLoaded['incValSummary']
+    # questionImportanceDataFrame = everythingLoaded['questionImportanceDataFrame']
+    # trainingDataMeanImpacts = everythingLoaded['trainingDataMeanImpacts']
+    # questionsDict = everythingLoaded['questionsDict']
 
 
 if __name__ == "__main__":
