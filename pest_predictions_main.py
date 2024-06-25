@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from pest_predictions_utils import *
 
-inputFileName = 'training_data.xlsx'
+inputFileName = 'training_data_scolytinae.xlsx'
 outputFileName = "entry_sheet_scolytinae.xlsx"
 
 def main():
@@ -53,7 +53,6 @@ def main():
     #make prediction tool worksheet
     generate_working_sheet_openpyxl(questionsDict,trainingDataSummary,randomForestModelsDict,meansDict,outputFileName)
 
-
     # save a backup before the long validation steps
     joblib.dump({'trainingDataSummary': trainingDataSummary,\
     'randomForestModelsDict': randomForestModelsDict,\
@@ -66,6 +65,15 @@ def main():
     'questionImportanceDataFrame': questionImportanceDataFrame,\
     'trainingDataMeanImpacts': trainingDataMeanImpacts,\
     'questionsDict': questionsDict}, "./backup1.joblib", compress=3)
+    
+    #save question imporacace in a tsv
+    questionImportanceDataFrame.to_csv('importances_all.tsv',sep='\t')   
+    
+    #prepare firgure 2
+    plot_figure_2(dataSummary)
+
+
+
 
     #Do the incremental validation
     #note this is slow, and will take hours

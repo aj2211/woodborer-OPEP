@@ -309,7 +309,7 @@ def generate_working_sheet_openpyxl(questionsDict,trainingDataSummary,randomFore
     from openpyxl.styles import Alignment, Color, PatternFill, Font, Border
     from sklearn.ensemble import RandomForestRegressor
     from sklearn.tree import _tree
-    numRepeats = 200
+    numRepeats = 1000
     
     redFill = PatternFill(start_color='EE1111',
                     end_color='EE1111',
@@ -362,6 +362,8 @@ def generate_working_sheet_openpyxl(questionsDict,trainingDataSummary,randomFore
     ws0.append(["Woodborer-specific risk assessment model."])
     ws0['A' + str(ws0.max_row)].font = Font(size=20)
     ws0.append(["Version: " + datetime.today().strftime('%Y%m%d')])
+    ws0.append([""])
+    ws0.append(["Important note: The default behavior of Microsoft excel is to apply a single calculation option to all open workbooks. So although this sheet is set to calculate manually (by clicking -calculate now- in the formula tab), if you open at the same time as another workbook, the calculation will be automatic, recalculating 1000000s of values at every change, which will be very slow. The work around for this is to do one of the following: a) close other workbooks, b) set other workbooks to calculate manually, or c) find out how to open a separate instance of Excel"])
     ws0.append([""])
     ws0.append(["Instructions"])
     ws0['A' + str(ws0.max_row)].font = Font(size=20)
@@ -786,72 +788,53 @@ def generate_working_sheet_openpyxl(questionsDict,trainingDataSummary,randomFore
     """
     wb.save(outputFileName)
 
+
 def plot_figure_2(dataSummary):
-    plt.clf()
-    rcParams['figure.figsize'] = 100,200
+    # Adjust figure size
+    plt.figure(figsize=(12, 14))  # Width, Height in inches
+    bins = np.arange(0.0, 1.05, 0.05)
     plt.subplot(4, 1, 1)
     dataSummary = dataSummary.assign(Actual_values=dataSummary.imp2.map({0: "No", 1: "Yes"}))
     plt.xlim(0, 1)
-    imp2plot = sns.histplot(data=dataSummary, x="RDTF_imp2", hue="Actual_values", fill=True, common_norm=True, alpha=1, multiple="stack", binwidth=0.05, bins=20)
+    imp2plot = sns.histplot(data=dataSummary, x="RDTF_imp2", hue="Actual_values", fill=True, common_norm=True, alpha=1, multiple="stack",  bins=bins)
     #imp2plot.set(xlabel="Model predictions")
     imp2plot.set(xlabel=None)
     imp2plot.set(ylabel="Count")
     imp2plot.annotate('At least impact rating 2', xy=(0.5, 0.90), xycoords='axes fraction', fontsize=12, ha="center")
     imp2plot.axvline(x=0.5,ymin=0,ymax=100, color='gray', linestyle='--')
-    imp2plot
+    imp2plot.legend(loc='upper right', bbox_to_anchor=(0.95, 1.0), title="Actual values")
+    # imp2plot
     plt.subplot(4, 2, 3)
     plt.xlim(0, 1)
-    imp3plot = sns.histplot(data=dataSummary, x="RDTF_imp3", hue="imp3", fill=True, common_norm=True, alpha=1, multiple="stack", binwidth=0.05, bins=20, legend=False)
+    imp3plot = sns.histplot(data=dataSummary, x="RDTF_imp3", hue="imp3", fill=True, common_norm=True, alpha=1, multiple="stack",  bins=bins, legend=False)
     imp3plot.set(xlabel=None)
     imp3plot.set(ylabel=None)
     imp3plot.axvline(x=0.5,ymin=0,ymax=100, color='gray', linestyle='--')
     imp3plot.annotate('At least impact rating 3', xy=(0.5, 0.90), xycoords='axes fraction', fontsize=12, ha="center")
-    imp3plot 
+    # imp3plot 
     plt.subplot(4, 2, 4)
     plt.xlim(0, 1)
-    imp4plot = sns.histplot(data=dataSummary, x="RDTF_imp4", hue="imp4", fill=True, common_norm=True, alpha=1, multiple="stack", binwidth=0.05, bins=20, legend=False)
+    imp4plot = sns.histplot(data=dataSummary, x="RDTF_imp4", hue="imp4", fill=True, common_norm=True, alpha=1, multiple="stack", bins=bins, legend=False)
     imp4plot.set(xlabel=None)
     imp4plot.set(ylabel=None)
     imp4plot.axvline(x=0.5,ymin=0,ymax=100, color='gray', linestyle='--')
     imp4plot.annotate('At least impact rating 4', xy=(0.5, 0.90), xycoords='axes fraction', fontsize=12, ha="center")
-    imp4plot
+    # imp4plot
     plt.subplot(4, 2, 5)
     plt.xlim(0, 1)
-    imp5plot = sns.histplot(data=dataSummary, x="RDTF_imp5", hue="imp5", fill=True, common_norm=True, alpha=1, multiple="stack", binwidth=0.05, bins=20, legend=False)
+    imp5plot = sns.histplot(data=dataSummary, x="RDTF_imp5", hue="imp5", fill=True, common_norm=True, alpha=1, multiple="stack", bins=bins, legend=False)
     imp5plot.set(xlabel=None)
     imp5plot.set(ylabel=None)
     imp5plot.axvline(x=0.5,ymin=0,ymax=100, color='gray', linestyle='--')
     imp5plot.annotate('At least impact rating 5', xy=(0.5, 0.90), xycoords='axes fraction', fontsize=12, ha="center")
-    imp5plot
+    # imp5plot
     plt.subplot(4, 2, 6)
     plt.xlim(0, 1)
-    imp6plot = sns.histplot(data=dataSummary, x="RDTF_imp6", hue="imp6", fill=True, common_norm=True, alpha=1, multiple="stack", binwidth=0.05, bins=20, legend=False)
+    imp6plot = sns.histplot(data=dataSummary, x="RDTF_imp6", hue="imp6", fill=True, common_norm=True, alpha=1, multiple="stack", bins=bins, legend=False)
     imp6plot.set(xlabel=None)
     imp6plot.set(ylabel=None)
     imp6plot.axvline(x=0.5,ymin=0,ymax=100, color='gray', linestyle='--')
     imp6plot.annotate('At least impact rating 6', xy=(0.5, 0.90), xycoords='axes fraction', fontsize=12, ha="center")
-    imp6plot
-    plt.savefig('testingFigure.pdf')  
+    # imp6plot
+    plt.savefig('testingFigure.pdf')
 
-
-
-
-
-
-
-
-
-#end
-
-# def get_question_lookup_dict(sqliteFileName):
-    # cur = sqlite3.connect(sqliteFileName)
-    # sql = """SELECT 
-    # questionID, 
-    # questionShort
-    # FROM refinedQuestions """
-    # result = pandas.read_sql_query(sql, cur)
-    # questionLookup = result.set_index('questionID')
-    # questionLookupDict = {}
-    # for i, row in result.iterrows():
-        # questionLookupDict[row['questionID']] = (str(row['questionID']) + ": " + row['questionShort'])
-    # return(questionLookupDict)
